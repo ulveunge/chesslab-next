@@ -1,0 +1,10 @@
+{
+  "singleQuote": true,
+  "plugins": [
+    "@trivago/prettier-plugin-sort-imports",
+    "prettier-plugin-tailwindcss"
+  ],
+  "jsxSingleQuote": true,
+  "tailwindFunctions": ["cva", "clsx", "cn", "twMerge"],
+  "tailwindAttributes": ["overlayClassName"]
+}
