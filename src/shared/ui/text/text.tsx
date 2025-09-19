@@ -21,7 +21,7 @@ const variantToTagMap = {
   code: 'code',
 } as const;
 
-const typographyVariants = cva(null, {
+const textVariants = cva(null, {
   variants: {
     variant: {
       h1: 'text-4xl font-extrabold tracking-tight lg:text-5xl',
@@ -43,11 +43,11 @@ const typographyVariants = cva(null, {
   },
 });
 
-type Props = VariantProps<typeof typographyVariants> & {
+type Props = VariantProps<typeof textVariants> & {
   asChild?: boolean;
 };
 
-const Typography: PolymorphicComponent<typeof DEFAULT_TAG, Props> = ({
+const Text: PolymorphicComponent<typeof DEFAULT_TAG, Props> = ({
   as: asProp,
   asChild,
   variant,
@@ -61,11 +61,8 @@ const Typography: PolymorphicComponent<typeof DEFAULT_TAG, Props> = ({
       : variantToTagMap[variant ?? DEFAULT_TAG];
 
   return (
-    <Comp
-      className={cn(typographyVariants({ variant, className }))}
-      {...props}
-    />
+    <Comp className={cn(textVariants({ variant, className }))} {...props} />
   );
 };
 
-export default Typography;
+export default Text;
