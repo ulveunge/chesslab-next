@@ -19,6 +19,7 @@ const variantToTagMap = {
   blockquote: 'blockquote',
   ul: 'ul',
   code: 'code',
+  'visually-hidden': 'span',
 } as const;
 
 const textVariants = cva(null, {
@@ -36,6 +37,7 @@ const textVariants = cva(null, {
       blockquote: 'border-l-2 pl-6 italic',
       ul: 'ml-6 list-disc [&>li:not(:first-child)]:mt-2',
       code: 'bg-muted relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold',
+      'visually-hidden': 'sr-only',
     },
   },
   defaultVariants: {
