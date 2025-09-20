@@ -4,7 +4,9 @@ import { Chess as ChessGame, PieceSymbol } from 'chess.ts';
 import { useEffect, useRef, useState } from 'react';
 import { PieceDropHandlerArgs } from 'react-chessboard';
 
-export default function useStockfish(skillLevel: number) {
+const STOCKFISH_DEFAULT_SKILL_LEVEL = 1;
+
+export default function useStockfish() {
   const chessGameRef = useRef(new ChessGame());
   const game = chessGameRef.current;
   const [chessPosition, setChessPosition] = useState(game.fen());
@@ -22,6 +24,10 @@ export default function useStockfish(skillLevel: number) {
     const stockfishPath = !wasmSupported
       ? '/stockfish/stockfish-17.1-lite-51f59da.wasm' // Укажи точное имя файла (с хэшем, если есть)
       : '/stockfish/stockfish-17.1-lite-51f59da.js';
+
+    const skillLevel =
+      window.sessionStorage.getItem('stockfish-level') ??
+      STOCKFISH_DEFAULT_SKILL_LEVEL;
 
     try {
       stockfishRef.current = new window.Worker(stockfishPath);
