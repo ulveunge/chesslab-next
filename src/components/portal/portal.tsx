@@ -1,6 +1,6 @@
 'use client';
 
-import { useIsClient } from '@/shared/lib/hooks';
+import { useIsClient } from '@/lib/hooks';
 import { Root as PortalRadixRoot } from '@radix-ui/react-portal';
 import { ComponentProps } from 'react';
 

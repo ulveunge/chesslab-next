@@ -1,5 +1,5 @@
-import { PolymorphicComponent } from '@/shared/lib/types';
-import { cn } from '@/shared/lib/utils';
+import { PolymorphicComponent } from '@/lib/types';
+import { cn } from '@/lib/utils';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import React from 'react';

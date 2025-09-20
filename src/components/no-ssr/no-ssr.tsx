@@ -1,6 +1,6 @@
 'use client';
 
-import { useEnhancedEffect } from '@/shared/lib/hooks';
+import { useEnhancedEffect } from '@/lib/hooks';
 import { PropsWithChildren, ReactNode, useEffect, useState } from 'react';
 
 type Props = PropsWithChildren & {

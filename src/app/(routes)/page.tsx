@@ -1,6 +1,6 @@
 'use client';
 
-import { Text } from '@/shared/ui';
+import { Text } from '@/components';
 import Link from 'next/link';
 
 export default function Home() {

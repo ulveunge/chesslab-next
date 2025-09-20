@@ -1,6 +1,5 @@
 'use client';
 
-import { Stockfish } from '@/entities/stockfish';
 import {
   Text,
   Select,
@@ -8,7 +7,8 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
-} from '@/shared/ui';
+  Stockfish,
+} from '@/components';
 import { useState } from 'react';
 
 const STOCKFISH_DEFAULT_SKILL_LEVEL = 1;
@@ -48,7 +48,7 @@ export default function Home() {
           </Select>
         </div>
       ) : (
-        <Stockfish skillLeven={skillLevel} />
+        <Stockfish skillLevel={skillLevel} />
       )}
     </div>
   );

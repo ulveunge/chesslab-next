@@ -1,11 +1,10 @@
 'use client';
 
-import { PieceSymbol } from 'chess.ts';
-import { Chess as ChessGame } from 'chess.ts';
+import { Chess as ChessGame, PieceSymbol } from 'chess.ts';
 import { useEffect, useRef, useState } from 'react';
 import { PieceDropHandlerArgs } from 'react-chessboard';
 
-const useStockfish = (skillLevel: number) => {
+export default function useStockfish(skillLevel: number) {
   const chessGameRef = useRef(new ChessGame());
   const game = chessGameRef.current;
   const [chessPosition, setChessPosition] = useState(game.fen());
@@ -149,6 +148,4 @@ const useStockfish = (skillLevel: number) => {
   };
 
   return { position: chessPosition, onPieceDrop };
-};
-
-export default useStockfish;
+}
