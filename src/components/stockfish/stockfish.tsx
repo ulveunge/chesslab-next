@@ -4,16 +4,12 @@ import { Chess, ChessBoard, ChessBoardContainer } from '@/components';
 import { useStockfish } from '@/lib/hooks';
 import React from 'react';
 
-type Props = {
-  skillLevel: number;
-};
-
-export default function Stockfish({ skillLevel }: Props) {
-  const { position, onPieceDrop } = useStockfish(skillLevel);
+export default function Stockfish() {
+  const { position, onPieceDrop } = useStockfish();
 
   return (
     <Chess options={{ position, onPieceDrop }}>
-      <ChessBoardContainer className='mx-auto mt-20 size-[500px]'>
+      <ChessBoardContainer className='mx-auto mt-20 aspect-square max-h-[500px]'>
         <ChessBoard />
       </ChessBoardContainer>
     </Chess>
