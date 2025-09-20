@@ -5,7 +5,7 @@ type Props = {
 
 const TileButton = ({ title, onClick }: Props) => (
   <button
-    className='size-44 cursor-pointer rounded-2xl border border-black'
+    className='border-foreground size-44 cursor-pointer rounded-2xl border'
     onClick={onClick}
   >
     {title}
