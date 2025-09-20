@@ -5,6 +5,8 @@ import { Chess as ChessGame } from 'chess.ts';
 import { useEffect, useRef, useState } from 'react';
 import { PieceDropHandlerArgs } from 'react-chessboard';
 
+const STOCKFISH_SKILL_LEVEL = 1;
+
 const useStockfish = () => {
   const chessGameRef = useRef(new ChessGame());
   const game = chessGameRef.current;
@@ -37,6 +39,8 @@ const useStockfish = () => {
     console.log('Отправлено: uci');
     stockfish.postMessage('isready');
     console.log('Отправлено: isready');
+    stockfish.postMessage(`setoption name Skill Level value ${STOCKFISH_SKILL_LEVEL}`); // 0–20
+    console.log('Сложность стокфиша: ', STOCKFISH_SKILL_LEVEL);
 
     stockfish.onmessage = (event) => {
       const message = event.data;
