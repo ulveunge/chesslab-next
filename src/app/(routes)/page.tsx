@@ -1,5 +1,5 @@
 import { Text } from '@/components';
-import { Games } from '@/lib/api';
+import { Games } from '@/lib/api/appwrite/collections';
 import Link from 'next/link';
 
 export default async function Home() {
