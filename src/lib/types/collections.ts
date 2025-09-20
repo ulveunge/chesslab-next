@@ -1,5 +1,3 @@
-import { Models } from 'appwrite';
-
-export interface IGame extends Models.Document {
+export interface IGame {
   fen: string;
 }
