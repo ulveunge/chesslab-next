@@ -1,3 +1,5 @@
+'use client';
+
 import React, { ComponentProps, createContext } from 'react';
 import { ChessboardOptions as ReactChessboardOptions } from 'react-chessboard';
 
