@@ -4,6 +4,7 @@ import {
   Button,
   Dialog,
   DialogContent,
+  DialogTitle,
   DialogTrigger,
   Select,
   SelectContent,
@@ -11,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
   TileButton,
+  Text,
 } from '@/components';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -33,10 +35,13 @@ const Main = () => {
   return (
     <div className='mt-40 flex items-center justify-center gap-4'>
       <Dialog>
-        <DialogTrigger>
+        <DialogTrigger asChild>
           <TileButton title='С компом' />
         </DialogTrigger>
         <DialogContent className='pt-12'>
+          <Text variant='visually-hidden' asChild>
+            <DialogTitle>Выбери сложность</DialogTitle>
+          </Text>
           <Select onValueChange={onSelectSkillLevel}>
             <SelectTrigger className='w-full'>
               <SelectValue placeholder='Выбери сложность' />

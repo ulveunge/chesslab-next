@@ -9,7 +9,7 @@ const Header = () => {
   const { back } = useRouter();
 
   return (
-    <header className='border-foreground relative border-b p-4'>
+    <header className='border-border relative border-b p-4'>
       {pathname !== '/' && (
         <button
           onClick={back}
