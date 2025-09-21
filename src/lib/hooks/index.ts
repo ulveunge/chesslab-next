@@ -4,3 +4,4 @@ export { default as useDebouncedState } from './use-debounced-state';
 export { default as useMediaQuery } from './use-media-query';
 export { default as useIsClient } from './use-is-client';
 export { default as useStockfish } from './use-stockfish';
+export { default as useAnonymousUser } from './use-anonymous-user';
