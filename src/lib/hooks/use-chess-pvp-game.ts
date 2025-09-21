@@ -38,8 +38,19 @@ export default function useChessPvpGame(game: IGame) {
   }, [currentGame, anonymousUser]);
 
   const canMove = useMemo(() => {
-    return turn === ownColor;
-  }, [ownColor, turn]);
+    return (
+      anonymousUser &&
+      (anonymousUser.id === currentGame.whitePlayerId ||
+        anonymousUser.id === currentGame.blackPlayerId) &&
+      turn === ownColor
+    );
+  }, [
+    anonymousUser,
+    currentGame.blackPlayerId,
+    currentGame.whitePlayerId,
+    ownColor,
+    turn,
+  ]);
 
   const onPieceDrop = ({
     sourceSquare,
