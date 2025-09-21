@@ -1,4 +1,12 @@
-import { Client, Account, Databases, Models, ID, Query } from 'appwrite';
+import {
+  Client,
+  Account,
+  Databases,
+  Models,
+  ID,
+  Query,
+  RealtimeResponseEvent,
+} from 'appwrite';
 
 export const client = new Client();
 
@@ -21,37 +29,37 @@ export class Collection<T extends object> {
   async create(
     data: Omit<T, keyof Models.Document>,
     id: string = ID.unique(),
-  ): Promise<Models.Document & T> {
+  ): Promise<T> {
     return databases.createDocument(
       APPWRITE_DATABASE_ID,
       this.collectionId,
       id,
       data,
-    ) as unknown as Models.Document & T;
+    ) as T;
   }
 
-  async get(id: string): Promise<Models.Document & T> {
+  async getById(id: string): Promise<T> {
     return databases.getDocument(
       APPWRITE_DATABASE_ID,
       this.collectionId,
       id,
-    ) as unknown as Models.Document & T;
+    ) as T;
   }
 
-  async update(id: string, data: Partial<T>): Promise<Models.Document & T> {
+  async update(id: string, data: Partial<T>): Promise<T> {
     return databases.updateDocument(
       APPWRITE_DATABASE_ID,
       this.collectionId,
       id,
       data,
-    ) as unknown as Models.Document & T;
+    ) as T;
   }
 
   async delete(id: string): Promise<void> {
     await databases.deleteDocument(APPWRITE_DATABASE_ID, this.collectionId, id);
   }
 
-  async list<
+  async get<
     P extends { limit: number; offset: number } | undefined = undefined,
   >({
     queries = [],
@@ -61,9 +69,9 @@ export class Collection<T extends object> {
     pagination?: P;
   } = {}): Promise<
     P extends undefined
-      ? (Models.Document & T)[]
+      ? T[]
       : {
-          items: (Models.Document & T)[];
+          items: T[];
           total: number;
           remaining: number;
           hasMore: boolean;
@@ -84,7 +92,7 @@ export class Collection<T extends object> {
 
     if (pagination) {
       return {
-        items: res.documents as unknown as (Models.Document & T)[],
+        items: res.documents as unknown as T[],
         total: res.total,
         remaining: Math.max(
           res.total - (pagination.offset + res.documents.length),
@@ -95,9 +103,9 @@ export class Collection<T extends object> {
         pageCount: Math.ceil(res.total / pagination.limit),
       } as unknown as Promise<
         P extends undefined
-          ? (Models.Document & T)[]
+          ? T[]
           : {
-              items: (Models.Document & T)[];
+              items: T[];
               total: number;
               remaining: number;
               hasMore: boolean;
@@ -109,9 +117,9 @@ export class Collection<T extends object> {
 
     return res.documents as unknown as Promise<
       P extends undefined
-        ? (Models.Document & T)[]
+        ? T[]
         : {
-            items: (Models.Document & T)[];
+            items: T[];
             total: number;
             remaining: number;
             hasMore: boolean;
@@ -119,6 +127,20 @@ export class Collection<T extends object> {
             pageCount: number;
           }
     >;
+  }
+
+  subscribe({
+    id,
+    callback,
+  }: {
+    callback: (event: RealtimeResponseEvent<T>) => void;
+    id?: string;
+  }) {
+    const channel = `databases.${APPWRITE_DATABASE_ID}.collections.${this.collectionId}.documents${
+      id ? `.${id}` : ''
+    }`;
+
+    return client.subscribe(channel, callback);
   }
 }
 
