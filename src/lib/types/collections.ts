@@ -5,4 +5,7 @@ export interface IGame extends Models.Document {
   pgn: string;
   whitePlayerId: string | null;
   blackPlayerId: string | null;
+  joinToken: string | null;
+  joinTokenUsed: boolean;
+  result: 'white' | 'black' | 'draw' | 'ongoing' | 'canceled';
 }

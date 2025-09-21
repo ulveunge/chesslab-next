@@ -8,7 +8,7 @@ type Props = {
   game: IGame; // TODO: Придумать как удобнее типизировать
 };
 
-export default function Game({ game }: Props) {
+export default function PvpGame({ game }: Props) {
   const { position, onPieceDrop, boardOrientation } = useChessPvpGame(game);
 
   return (

@@ -17,9 +17,8 @@ import {
   ToggleGroupItem,
 } from '@/components';
 import { ID } from '@/lib/api/appwrite/appwrite';
-import { Games } from '@/lib/api/appwrite/collections';
-import { INITIAL_FEN } from '@/lib/constants';
-import { saveGameConfig } from '@/lib/utils';
+import { createGame } from '@/lib/api/game';
+import { useAnonymousUser } from '@/lib/hooks';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -30,6 +29,7 @@ const LEVELS = Array.from({ length: STOCKFISH_MAX_SKILL_LEVEL }, (_, idx) =>
 
 const Main = () => {
   const router = useRouter();
+  const { anonymousUser } = useAnonymousUser();
 
   const [selected, setSelected] = useState<boolean>(false);
   const [selectedColor, setSelectedColor] = useState<string>();
@@ -109,25 +109,13 @@ const Main = () => {
             </ToggleGroup>
           </div>
           <Button
-            disabled={!selectedColor}
+            disabled={!selectedColor || !anonymousUser}
             onClick={async () => {
-              const playerId = window.localStorage.getItem('player-id')!;
+              if (!anonymousUser) return;
 
-              const game = await Games.create({
-                fen: INITIAL_FEN,
-                whitePlayerId: selectedColor === 'w' ? playerId : null,
-                blackPlayerId: selectedColor === 'b' ? playerId : null,
-                pgn: '',
-              }).then((res) => {
-                const gameConfig = {
-                  id: res.$id,
-                  color: selectedColor! as 'w' | 'b',
-                  playerId,
-                };
-
-                saveGameConfig(gameConfig);
-
-                return res;
+              const game = await createGame({
+                userId: anonymousUser.id,
+                color: selectedColor as 'w' | 'b',
               });
 
               router.push(`/game/${game.$id}`);

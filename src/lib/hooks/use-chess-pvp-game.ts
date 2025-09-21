@@ -1,54 +1,51 @@
 'use client';
 
 import { Games } from '../api/appwrite/collections';
+import { joinGame } from '../api/game';
 import { IGame } from '../types';
-import { getGameConfig } from '../utils';
+import useAnonymousUser from './use-anonymous-user';
 import { Chess as ChessGame } from 'chess.ts';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { PieceDropHandlerArgs } from 'react-chessboard';
 
 export default function useChessPvpGame(game: IGame) {
   const chessGameRef = useRef(new ChessGame(game.fen));
+  const { anonymousUser } = useAnonymousUser();
 
   const [position, setPosition] = useState(chessGameRef.current.fen());
 
   const [turn, setTurn] = useState<'w' | 'b'>(chessGameRef.current.turn());
 
-  const playerId = useMemo(() => {
-    if (typeof window === 'undefined') return null;
+  const [currentGame, setCurrentGame] = useState(game);
 
-    return window.localStorage.getItem('player-id');
-  }, []);
-
-  const [gameConfig, setGameConfig] = useState(getGameConfig(game.$id));
-
+  // TODO: возможно, имеет смысл сохранять ориентацию доски в куки, чтобы её смены не происходило на клиенте?
   const boardOrientation = useMemo(() => {
-    switch (true) {
-      case gameConfig && gameConfig.id === game.$id && gameConfig.color === 'b':
-        return 'black';
-      case !gameConfig:
-      default:
-        return 'white';
-    }
-  }, [game.$id, gameConfig]);
+    if (!anonymousUser) return 'white';
 
-  const canMakeMove = useMemo(() => {
-    if (!gameConfig) return false;
+    const { id: playerId } = anonymousUser;
 
-    if (gameConfig.playerId !== playerId) return false;
+    if (playerId === game.whitePlayerId) return 'white';
 
-    const isPlayerTurn =
-      (turn === 'w' && gameConfig.color === 'w') ||
-      (turn === 'b' && gameConfig.color === 'b');
+    if (playerId === game.blackPlayerId) return 'black';
 
-    return isPlayerTurn;
-  }, [gameConfig, playerId, turn]);
+    return 'white';
+  }, [anonymousUser, game.blackPlayerId, game.whitePlayerId]);
+
+  const ownColor = useMemo(() => {
+    if (!anonymousUser) return null;
+
+    return anonymousUser.id === currentGame.whitePlayerId ? 'w' : 'b';
+  }, [currentGame, anonymousUser]);
+
+  const canMove = useMemo(() => {
+    return turn === ownColor;
+  }, [ownColor, turn]);
 
   const onPieceDrop = ({
     sourceSquare,
     targetSquare,
   }: PieceDropHandlerArgs) => {
-    if (!targetSquare || !canMakeMove) return false;
+    if (!targetSquare || !canMove) return false;
 
     const move = chessGameRef.current.move({
       from: sourceSquare,
@@ -75,6 +72,7 @@ export default function useChessPvpGame(game: IGame) {
       callback: (event) => {
         if (event.events.some((e) => e.includes('update'))) {
           chessGameRef.current.loadPgn(event.payload.pgn);
+          setCurrentGame(event.payload);
           setPosition(chessGameRef.current.fen());
           setTurn(chessGameRef.current.turn());
         }
@@ -85,37 +83,35 @@ export default function useChessPvpGame(game: IGame) {
   }, [game.$id]);
 
   useEffect(() => {
-    console.log('position: ', position);
-  }, [position]);
+    (async () => {
+      if (!anonymousUser) return;
 
-  useEffect(() => {
-    if (
-      (game.whitePlayerId && game.blackPlayerId) ||
-      !playerId ||
-      playerId === game.whitePlayerId ||
-      playerId === game.blackPlayerId
-    )
-      return;
+      if (!game.joinToken) return;
 
-    Games.update(game.$id, {
-      ...(game.whitePlayerId ? { blackPlayerId: playerId } : {}),
-      ...(game.blackPlayerId
-        ? {
-            whitePlayerId: playerId,
-          }
-        : {}),
-    }).then((res) => {
-      const newGameConfig = {
-        id: res.$id,
-        color: (res.whitePlayerId === playerId ? 'w' : 'b') as 'w' | 'b',
-        playerId,
-      };
+      if (
+        currentGame.whitePlayerId === anonymousUser.id ||
+        currentGame.blackPlayerId === anonymousUser.id
+      )
+        return;
 
-      setGameConfig(newGameConfig);
+      try {
+        const updatedGame = await joinGame({
+          game,
+          userId: anonymousUser.id,
+          joinToken: game.joinToken,
+        });
 
-      return res;
-    });
-  }, [game, playerId]);
+        setCurrentGame(updatedGame);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, [
+    anonymousUser,
+    currentGame.blackPlayerId,
+    currentGame.whitePlayerId,
+    game,
+  ]);
 
   return {
     position,

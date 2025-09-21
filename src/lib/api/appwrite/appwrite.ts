@@ -29,12 +29,14 @@ export class Collection<T extends object> {
   async create(
     data: Omit<T, keyof Models.Document>,
     id: string = ID.unique(),
+    permissions?: string[],
   ): Promise<T> {
     return databases.createDocument(
       APPWRITE_DATABASE_ID,
       this.collectionId,
       id,
       data,
+      permissions,
     ) as T;
   }
 
@@ -46,12 +48,17 @@ export class Collection<T extends object> {
     ) as T;
   }
 
-  async update(id: string, data: Partial<T>): Promise<T> {
+  async update(
+    id: string,
+    data: Partial<T>,
+    permissions?: string[],
+  ): Promise<T> {
     return databases.updateDocument(
       APPWRITE_DATABASE_ID,
       this.collectionId,
       id,
       data,
+      permissions,
     ) as T;
   }
 
@@ -144,4 +151,4 @@ export class Collection<T extends object> {
   }
 }
 
-export { ID, Query, type Models } from 'appwrite';
+export { ID, Query, Permission, Role, type Models } from 'appwrite';
