@@ -18,10 +18,10 @@ export default async function createGame({
       {
         fen: INITIAL_FEN,
         pgn: '',
-        result: 'ongoing',
         ...(color === 'w'
           ? { whitePlayerId: userId, blackPlayerId: null }
           : { blackPlayerId: userId, whitePlayerId: null }),
+        gameState: 'ongoing',
       },
       gameId,
       [Permission.update(Role.user(userId))],
