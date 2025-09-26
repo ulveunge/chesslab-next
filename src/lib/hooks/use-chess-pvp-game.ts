@@ -97,7 +97,12 @@ export default function useChessPvpGame(game: IGame) {
     (async () => {
       if (!anonymousUser) return;
 
-      if (currentGame.whitePlayerId && currentGame.blackPlayerId) return;
+      if (
+        (currentGame.whitePlayerId && currentGame.blackPlayerId) ||
+        game.whitePlayerId === anonymousUser.id ||
+        game.blackPlayerId === anonymousUser.id
+      )
+        return;
 
       try {
         const updatedGame = await joinGame({
