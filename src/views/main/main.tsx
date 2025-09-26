@@ -16,11 +16,10 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from '@/components';
-import { ID } from '@/lib/api/appwrite/appwrite';
-import { createGame } from '@/lib/api/game';
 import { useAnonymousUser } from '@/lib/hooks';
+import { createGame } from '@/lib/server/actions';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const STOCKFISH_MAX_SKILL_LEVEL = 10;
 const LEVELS = Array.from({ length: STOCKFISH_MAX_SKILL_LEVEL }, (_, idx) =>
@@ -38,14 +37,6 @@ const Main = () => {
     setSelected(true);
     window.sessionStorage.setItem('stockfish-level', value);
   };
-
-  useEffect(() => {
-    const playerId = window.localStorage.getItem('player-id');
-
-    if (playerId) return;
-
-    window.localStorage.setItem('player-id', ID.unique());
-  }, []);
 
   return (
     <div className='mt-40 flex items-center justify-center gap-4'>

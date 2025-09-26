@@ -1,5 +1,7 @@
-import { ID } from '@/lib/api/appwrite/appwrite';
-import { Games } from '@/lib/api/appwrite/collections';
+'use server';
+
+import { ID, Permission, Role } from '@/lib/appwrite/server';
+import { GamesAdmin } from '@/lib/appwrite/server/collections';
 import { INITIAL_FEN } from '@/lib/constants';
 
 export default async function createGame({
@@ -11,20 +13,18 @@ export default async function createGame({
 }) {
   try {
     const gameId = ID.unique();
-    const joinToken = crypto.randomUUID();
 
-    const game = await Games.create(
+    const game = await GamesAdmin.create(
       {
         fen: INITIAL_FEN,
         pgn: '',
-        joinToken,
-        joinTokenUsed: false,
         result: 'ongoing',
         ...(color === 'w'
           ? { whitePlayerId: userId, blackPlayerId: null }
           : { blackPlayerId: userId, whitePlayerId: null }),
       },
       gameId,
+      [Permission.update(Role.user(userId))],
     );
 
     return game;

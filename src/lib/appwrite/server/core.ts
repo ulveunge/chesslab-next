@@ -1,30 +1,19 @@
 import {
-  Client,
-  Account,
-  Databases,
-  Models,
-  ID,
-  Query,
-  RealtimeResponseEvent,
-} from 'appwrite';
+  APPWRITE_DATABASE_ID,
+  APPWRITE_ENDPOINT,
+  APPWRITE_PROJECT_ID,
+} from '../config';
+import { Client, Databases, ID, Models, Query } from 'node-appwrite';
 
-export const client = new Client();
+const client = new Client()
+  .setEndpoint(APPWRITE_ENDPOINT)
+  .setProject(APPWRITE_PROJECT_ID)
+  .setKey(process.env.APPWRITE_API_KEY!);
 
-const APPWRITE_ENDPOINT = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!;
-const APPWRITE_PROJECT_ID = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!;
-const APPWRITE_DATABASE_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!;
+const databases = new Databases(client);
 
-client.setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
-
-export const account = new Account(client);
-export const databases = new Databases(client);
-
-export class Collection<T extends object> {
-  private collectionId: string;
-
-  constructor(collectionId: string) {
-    this.collectionId = collectionId;
-  }
+class Collection<T extends object> {
+  constructor(protected collectionId: string) {}
 
   async create(
     data: Omit<T, keyof Models.Document>,
@@ -135,20 +124,8 @@ export class Collection<T extends object> {
           }
     >;
   }
-
-  subscribe({
-    id,
-    callback,
-  }: {
-    callback: (event: RealtimeResponseEvent<T>) => void;
-    id?: string;
-  }) {
-    const channel = `databases.${APPWRITE_DATABASE_ID}.collections.${this.collectionId}.documents${
-      id ? `.${id}` : ''
-    }`;
-
-    return client.subscribe(channel, callback);
-  }
 }
 
 export { ID, Query, Permission, Role, type Models } from 'appwrite';
+
+export { client, databases, Collection };

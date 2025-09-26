@@ -1,9 +1,9 @@
 'use client';
 
-import { Games } from '../api/appwrite/collections';
-import { joinGame } from '../api/game';
 import { IGame } from '../types';
 import useAnonymousUser from './use-anonymous-user';
+import { Games } from '@/lib/appwrite/browser/collections';
+import { joinGame } from '@/lib/server/actions';
 import { Chess as ChessGame } from 'chess.ts';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { PieceDropHandlerArgs } from 'react-chessboard';
@@ -97,19 +97,12 @@ export default function useChessPvpGame(game: IGame) {
     (async () => {
       if (!anonymousUser) return;
 
-      if (!game.joinToken) return;
-
-      if (
-        currentGame.whitePlayerId === anonymousUser.id ||
-        currentGame.blackPlayerId === anonymousUser.id
-      )
-        return;
+      if (currentGame.whitePlayerId && currentGame.blackPlayerId) return;
 
       try {
         const updatedGame = await joinGame({
           game,
           userId: anonymousUser.id,
-          joinToken: game.joinToken,
         });
 
         setCurrentGame(updatedGame);

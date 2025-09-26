@@ -1,7 +1,7 @@
 'use client';
 
 import { AnonymousAuthContext } from '../index';
-import { initializeAnonymousSession } from '@/lib/api/appwrite/auth';
+import { initializeAnonymousSession } from '@/lib/api/auth';
 import { IAnonymousUser } from '@/lib/types';
 import React, { PropsWithChildren, useEffect, useState } from 'react';
 

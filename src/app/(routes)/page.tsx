@@ -1,4 +1,4 @@
-import { Games } from '@/lib/api/appwrite/collections';
+import { Games } from '@/lib/appwrite/browser/collections';
 import { Main } from '@/views';
 
 export default async function Home() {
